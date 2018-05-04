@@ -40,6 +40,7 @@ import tech.tablesaw.io.TypeUtils;
 import tech.tablesaw.selection.BitmapBackedSelection;
 import tech.tablesaw.selection.Selection;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +56,14 @@ import static tech.tablesaw.api.ColumnType.BOOLEAN;
  * A column in a base table that contains float values
  */
 public class BooleanColumn extends AbstractColumn implements BooleanMapUtils, IntConvertibleColumn,
-        BooleanFillers<BooleanColumn>, Iterable<Boolean> {
+        BooleanFillers<BooleanColumn>, Iterable<Boolean>, Serializable {
 
-    public static final byte MISSING_VALUE = (Byte) BOOLEAN.getMissingValue();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final byte MISSING_VALUE = (Byte) BOOLEAN.getMissingValue();
 
     private static final byte BYTE_TRUE = 1;
     private static final byte BYTE_FALSE = 0;

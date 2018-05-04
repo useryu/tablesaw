@@ -34,6 +34,7 @@ import tech.tablesaw.io.TypeUtils;
 import tech.tablesaw.selection.Selection;
 import tech.tablesaw.sorting.comparators.DescendingLongComparator;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -55,9 +56,14 @@ import static tech.tablesaw.api.ColumnType.LOCAL_DATE_TIME;
  * A column in a table that contains long-integer encoded (packed) local date-time values
  */
 public class DateTimeColumn extends AbstractColumn
-implements DateTimeMapFunctions, DateTimeFilters, DateTimeFillers<DateTimeColumn>, Iterable<LocalDateTime> {
+implements DateTimeMapFunctions, DateTimeFilters, DateTimeFillers<DateTimeColumn>, Iterable<LocalDateTime>, Serializable {
 
-    public static final long MISSING_VALUE = (Long) ColumnType.LOCAL_DATE_TIME.getMissingValue();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final long MISSING_VALUE = (Long) ColumnType.LOCAL_DATE_TIME.getMissingValue();
 
     private final LongComparator reverseLongComparator = DescendingLongComparator.instance();
 
@@ -552,22 +558,27 @@ implements DateTimeMapFunctions, DateTimeFilters, DateTimeFillers<DateTimeColumn
      */
     @Override
     public Iterator<LocalDateTime> iterator() {
-
-        return new Iterator<LocalDateTime>() {
-
-            final LongIterator longIterator = longIterator();
-
-            @Override
-            public boolean hasNext() {
-                return longIterator.hasNext();
-            }
-
-            @Override
-            public LocalDateTime next() {
-                return PackedLocalDateTime.asLocalDateTime(longIterator.nextLong());
-            }
-        };
+        return new LDTIterator();
     }
+    
+    private class LDTIterator implements Iterator<LocalDateTime>, Serializable{
+
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		final LongIterator longIterator = longIterator();
+
+        @Override
+        public boolean hasNext() {
+            return longIterator.hasNext();
+        }
+
+        @Override
+        public LocalDateTime next() {
+            return PackedLocalDateTime.asLocalDateTime(longIterator.nextLong());
+        }
+    };
 
     // fillWith methods
 

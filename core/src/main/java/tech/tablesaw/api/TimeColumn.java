@@ -33,6 +33,7 @@ import tech.tablesaw.io.TypeUtils;
 import tech.tablesaw.selection.Selection;
 import tech.tablesaw.sorting.comparators.DescendingIntComparator;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -53,9 +54,14 @@ import static tech.tablesaw.columns.DateAndTimePredicates.*;
 /**
  * A column in a base table that contains float values
  */
-public class TimeColumn extends AbstractColumn implements Iterable<LocalTime>, TimeFilters, TimeFillers<TimeColumn>, TimeMapFunctions {
+public class TimeColumn extends AbstractColumn implements Iterable<LocalTime>, TimeFilters, TimeFillers<TimeColumn>, TimeMapFunctions, Serializable {
 
-    public static final int MISSING_VALUE = (Integer) LOCAL_TIME.getMissingValue();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final int MISSING_VALUE = (Integer) LOCAL_TIME.getMissingValue();
 
     /**
      * locale for formatter
@@ -543,20 +549,27 @@ public class TimeColumn extends AbstractColumn implements Iterable<LocalTime>, T
     @Override
     public Iterator<LocalTime> iterator() {
 
-        return new Iterator<LocalTime>() {
+        return new LTIterator();
+        
+    }
+    
+    private class LTIterator implements Iterator<LocalTime>, Serializable{
 
-            final IntIterator intIterator = intIterator();
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		final IntIterator intIterator = intIterator();
 
-            @Override
-            public boolean hasNext() {
-                return intIterator.hasNext();
-            }
+        @Override
+        public boolean hasNext() {
+            return intIterator.hasNext();
+        }
 
-            @Override
-            public LocalTime next() {
-                return PackedLocalTime.asLocalTime(intIterator.nextInt());
-            }
-        };
+        @Override
+        public LocalTime next() {
+            return PackedLocalTime.asLocalTime(intIterator.nextInt());
+        }
     }
 
     @Override

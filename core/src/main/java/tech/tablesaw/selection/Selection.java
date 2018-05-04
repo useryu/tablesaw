@@ -162,4 +162,7 @@ public interface Selection extends IntIterable, Filter {
         return selection;
     }
 
+    //add by fisher
+	public Selection clone();
+
 }

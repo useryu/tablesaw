@@ -15,12 +15,14 @@
 package tech.tablesaw.api;
 
 
+import java.io.Serializable;
+
 import tech.tablesaw.columns.Column;
 
 /**
  * Defines the type of data held by a {@link Column}
  */
-public enum ColumnType {
+public enum ColumnType implements Serializable{
 
     BOOLEAN(Byte.MIN_VALUE, 1, "Boolean"),
     STRING("", 4, "String"),

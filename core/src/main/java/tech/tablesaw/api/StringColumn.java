@@ -39,6 +39,7 @@ import tech.tablesaw.io.TypeUtils;
 import tech.tablesaw.selection.BitmapBackedSelection;
 import tech.tablesaw.selection.Selection;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,9 +59,14 @@ import static tech.tablesaw.api.ColumnType.STRING;
  * of missing values in this class's methods.
  */
 public class StringColumn extends AbstractColumn
-        implements CategoricalColumn, StringFilters, StringMapFunctions, StringReduceUtils {
+        implements CategoricalColumn, StringFilters, StringMapFunctions, StringReduceUtils, Serializable {
 
-    public final StringColumnReference column = new StringColumnReference(this.name());
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public final StringColumnReference column = new StringColumnReference(this.name());
 
     public static final String MISSING_VALUE = (String) STRING.getMissingValue();
 
@@ -74,7 +80,13 @@ public class StringColumn extends AbstractColumn
 
     private StringColumnFormatter printFormatter = new StringColumnFormatter();
 
-    private final IntComparator rowComparator = new IntComparator() {
+    private final IntComparator rowComparator = new RowIntComparator();
+
+    private class RowIntComparator implements IntComparator, Serializable{
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
         @Override
         public int compare(int i, int i1) {
@@ -94,19 +106,33 @@ public class StringColumn extends AbstractColumn
         return this;
     }
 
-    private final IntComparator reverseDictionarySortComparator = new IntComparator() {
-        @Override
+    private final IntComparator reverseDictionarySortComparator = new ReverseIntComparator();
+
+    private class ReverseIntComparator implements IntComparator, Serializable{
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
         public int compare(int i, int i1) {
             return -lookupTable.get(i).compareTo(lookupTable.get(i1));
         }
     };
 
-    private final IntComparator dictionarySortComparator = new IntComparator() {
-        @Override
+    private class DictSortIntComparator implements IntComparator, Serializable{
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
         public int compare(int i, int i1) {
             return lookupTable.get(i).compareTo(lookupTable.get(i1));
         }
     };
+
+    private final IntComparator dictionarySortComparator = new DictSortIntComparator();
 
     public static StringColumn create(String name) {
         return create(name, DEFAULT_ARRAY_SIZE);
@@ -583,20 +609,26 @@ public class StringColumn extends AbstractColumn
 
     @Override
     public Iterator<String> iterator() {
-        return new Iterator<String>() {
+        return new StringIterator();
+    }
+    
+    private class StringIterator implements Iterator<String>, Serializable{
 
-            private final IntListIterator valuesIt = values.iterator();
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private final IntListIterator valuesIt = values.iterator();
 
-            @Override
-            public boolean hasNext() {
-                return valuesIt.hasNext();
-            }
+        @Override
+        public boolean hasNext() {
+            return valuesIt.hasNext();
+        }
 
-            @Override
-            public String next() {
-                return lookupTable.get(valuesIt.nextInt());
-            }
-        };
+        @Override
+        public String next() {
+            return lookupTable.get(valuesIt.nextInt());
+        }
     }
 
     public Set<String> asSet() {
@@ -720,9 +752,14 @@ public class StringColumn extends AbstractColumn
     /**
      * A map that supports reversible key value pairs of int-String
      */
-    static class DictionaryMap {
+    static class DictionaryMap implements Serializable{
 
-        private final Int2ObjectMap<String> keyToValue = new Int2ObjectOpenHashMap<>();
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		private final Int2ObjectMap<String> keyToValue = new Int2ObjectOpenHashMap<>();
 
         private final Object2IntMap<String> valueToKey = new Object2IntOpenHashMap<>();
 

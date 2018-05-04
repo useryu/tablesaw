@@ -49,7 +49,7 @@ public class AllOf implements Filter {
         Selection selection = null;
         for (Filter filter : filterList) {
             if (selection == null) {
-                selection = filter.apply(relation);
+                selection = filter.apply(relation).clone();
             } else {
                 selection.and(filter.apply(relation));
             }
@@ -69,4 +69,10 @@ public class AllOf implements Filter {
         }
         return selection;
     }
+
+    //add by fisher
+	@Override
+	public String toString() {
+		return "AllOf [filterList=" + filterList + "]";
+	}        
 }

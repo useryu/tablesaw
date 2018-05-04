@@ -5,6 +5,7 @@ import tech.tablesaw.columns.dates.PackedDate;
 import tech.tablesaw.columns.datetimes.PackedDateTime;
 import tech.tablesaw.columns.times.PackedTime;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -12,9 +13,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Row implements Iterator<Row> {
+public class Row implements Iterator<Row>,Serializable {
 
-    private int rowNumber;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private int rowNumber;
     private final Table table;
     private final Map<String, PackedDate> dateColumnMap = new HashMap<>();
     private final Map<String, NumberColumn> numberColumnMap = new HashMap<>();

@@ -2,13 +2,18 @@ package tech.tablesaw.columns.numbers;
 
 import tech.tablesaw.api.NumberColumn;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class NumberColumnFormatter {
+public class NumberColumnFormatter implements Serializable{
 
-    private final NumberFormat format;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final NumberFormat format;
     private String missingString = "";
 
     public static NumberColumnFormatter percent(int fractionalDigits) {

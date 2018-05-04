@@ -39,6 +39,7 @@ import tech.tablesaw.table.Rows;
 import tech.tablesaw.table.StandardTableSliceGroup;
 import tech.tablesaw.table.TableSliceGroup;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -58,9 +59,16 @@ import static tech.tablesaw.selection.Selection.selectNRowsAtRandom;
  * <p>
  * Tables are the main data-type and primary focus of Airframe.
  */
-public class Table extends Relation implements Iterable<Row> {
+public class Table extends Relation implements Iterable<Row>,Serializable {
 
+	
+	
     /**
+	 * add by fisher,used to cache in redis 
+	 */
+	private static final long serialVersionUID = 100L;
+	
+	/**
      * The columns that hold the data in this table
      */
     private final List<Column> columnList = new ArrayList<>();

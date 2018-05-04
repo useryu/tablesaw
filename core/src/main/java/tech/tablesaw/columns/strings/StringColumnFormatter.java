@@ -2,11 +2,16 @@ package tech.tablesaw.columns.strings;
 
 import tech.tablesaw.api.StringColumn;
 
+import java.io.Serializable;
 import java.util.function.Function;
 
-public class StringColumnFormatter {
+public class StringColumnFormatter implements Serializable{
 
-    private final Function<String, String> formatter;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final Function<String, String> formatter;
     private String missingString = "";
 
     public StringColumnFormatter() {

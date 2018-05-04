@@ -101,6 +101,8 @@ public interface Column {
      * @return name as String
      */
     String name();
+    
+    void reName(String newName);
 
     /**
      * Sets the columns name to the given string

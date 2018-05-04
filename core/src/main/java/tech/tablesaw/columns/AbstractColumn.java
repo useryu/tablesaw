@@ -14,15 +14,22 @@
 
 package tech.tablesaw.columns;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.StringUtils;
 import tech.tablesaw.api.ColumnType;
 
 /**
  * Partial implementation of the {@link Column} interface
  */
-public abstract class AbstractColumn implements Column {
+public abstract class AbstractColumn implements Column, Serializable {
 
-    public static final int DEFAULT_ARRAY_SIZE = 128;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final int DEFAULT_ARRAY_SIZE = 128;
 
     private String name;
 
@@ -41,6 +48,11 @@ public abstract class AbstractColumn implements Column {
     public Column setName(String name) {
         this.name = name.trim();
         return this;
+    }
+
+    @Override
+    public void reName(String newName) {
+        this.name = newName.trim();
     }
 
     public abstract Column appendCell(String stringvalue);

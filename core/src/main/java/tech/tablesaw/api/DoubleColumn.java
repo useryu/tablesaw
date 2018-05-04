@@ -39,6 +39,7 @@ import tech.tablesaw.io.TypeUtils;
 import tech.tablesaw.selection.BitmapBackedSelection;
 import tech.tablesaw.selection.Selection;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -56,13 +57,17 @@ import static tech.tablesaw.api.ColumnType.NUMBER;
 /**
  * A column in a base table that contains double precision floating point values
  */
-public class DoubleColumn extends AbstractColumn implements NumberColumn {
+public class DoubleColumn extends AbstractColumn implements NumberColumn, Serializable {
 
-    private static final Pattern COMMA_PATTERN = Pattern.compile(",");
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     /**
      * Compares two doubles, such that a sort based on this comparator would sort in descending order
      */
-    private final DoubleComparator descendingComparator = (o2, o1) -> (Double.compare(o1, o2));
+    private final DoubleComparator descendingComparator = (DoubleComparator & Serializable)(o2, o1) -> (Double.compare(o1, o2));
 
     private DoubleArrayList data;
 
@@ -70,9 +75,16 @@ public class DoubleColumn extends AbstractColumn implements NumberColumn {
 
     private Locale locale;
 
-    private final IntComparator comparator = new IntComparator() {
+    private final IntComparator comparator = new DIntComparator(); 
+    
+    private class DIntComparator implements IntComparator,Serializable {
 
-        @Override
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
         public int compare(final int r1, final int r2) {
             final double f1 = data.getDouble(r1);
             final double f2 = data.getDouble(r2);

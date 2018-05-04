@@ -19,6 +19,7 @@ import tech.tablesaw.columns.Column;
 import tech.tablesaw.filtering.predicates.DoubleBiPredicate;
 import tech.tablesaw.filtering.predicates.DoubleRangePredicate;
 
+import java.math.BigDecimal;
 import java.util.function.DoublePredicate;
 
 /**
@@ -38,20 +39,38 @@ public interface NumberPredicates extends Column, IntIterable {
 
     DoubleBiPredicate isGreaterThan = (valueToTest, valueToCompareAgainst) -> valueToTest > valueToCompareAgainst;
 
+    //modified by fisher
     DoubleRangePredicate isBetweenExclusive = new DoubleRangePredicate() {
         @Override
         public boolean test(double valueToTest, double rangeStart, double rangeEnd) {
-            return valueToTest > rangeStart && valueToTest < rangeEnd;
+        	BigDecimal vt = new BigDecimal(valueToTest);
+        	BigDecimal start = new BigDecimal(rangeStart);
+        	BigDecimal end = new BigDecimal(rangeEnd);        	
+            return vt.compareTo(start)>0 && vt.compareTo(end) < 0;
         }
     };
 
+    //modified by fisher
     DoubleRangePredicate isBetweenInclusive = new DoubleRangePredicate() {
         @Override
         public boolean test(double valueToTest, double rangeStart, double rangeEnd) {
-            return valueToTest >= rangeStart && valueToTest <= rangeEnd;
+        	BigDecimal vt = new BigDecimal(valueToTest);
+        	BigDecimal start = new BigDecimal(rangeStart);
+        	BigDecimal end = new BigDecimal(rangeEnd);        	
+            return vt.compareTo(start)>=0 && vt.compareTo(end) <= 0;
         }
     };
 
+//  by fisher
+//    DoubleRangePredicate isBetweenInclusive = new DoubleRangePredicate() {
+//        @Override
+//        public boolean test(double valueToTest, double rangeStart, double rangeEnd) {
+//            return valueToTest >= rangeStart && valueToTest <= rangeEnd;
+//        }
+//    };
+
+    
+    //TODO use bigdecimal to compare
     DoubleBiPredicate isGreaterThanOrEqualTo = (valueToTest, valueToCompareAgainst) -> valueToTest >=
             valueToCompareAgainst;
 

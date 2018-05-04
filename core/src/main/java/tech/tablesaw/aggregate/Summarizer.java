@@ -151,6 +151,31 @@ public class Summarizer {
         return summarize(group);
     }
 
+    public Table byYu(String... columnNames) {
+        for (String columnName : columnNames) {
+            if (!temp.columnNames().contains(columnName)) {
+                temp.addColumns(original.column(columnName));
+            }
+        }
+        TableSliceGroup group = StandardTableSliceGroup.create(temp, columnNames);
+        return summarizeYu(group);
+    }
+
+    public Table byYu(CategoricalColumn... columns) {
+        for (Column c : columns) {
+            if (!temp.containsColumn(c)) {
+                temp.addColumns(c);
+            }
+        }
+        TableSliceGroup group = StandardTableSliceGroup.create(temp, columns);
+        return summarizeYu(group);
+    }
+
+    public Table byYu(String groupNameTemplate, int step) {
+        TableSliceGroup group = SelectionTableSliceGroup.create(temp, groupNameTemplate, step);
+        return summarizeYu(group);
+    }
+
     /**
      * Returns the result of applying to the functions to all the values in the appropriate column
      */
@@ -174,6 +199,45 @@ public class Summarizer {
     }
 
     /**
+     * Returns the result of applying to the functions to all the values in the appropriate column
+     */
+    public Table applyYu() {
+        List<Table> results = new ArrayList<>();
+        ArrayListMultimap<String, AggregateFunction> reductionMultimap = getAggregateFunctionMultimapYu();
+
+        for (String name : reductionMultimap.keys()) {
+            List<AggregateFunction> reductions = reductionMultimap.get(name);
+            Table table = TableSliceGroup.summaryTableName(temp);
+            for (AggregateFunction function : reductions) {
+                Column column = temp.column(name);
+                double result = function.summarize(column);
+                Column newColumn = DoubleColumn.create(TableSliceGroup.aggregateColumnName(name, function.functionName()));
+                ((DoubleColumn) newColumn).append(result);
+                table.addColumns(newColumn);
+            }
+            results.add(table);
+        }
+        return (combineTables(results));
+    }
+
+    /**
+     * Associates the columns to be summarized with the functions that match their type. All valid combinations are used
+     * @param group A table slice group
+     * @return      A table containing a row of summarized data for each group in the table slice group
+     */
+    private Table summarizeYu(TableSliceGroup group) {
+        List<Table> results = new ArrayList<>();
+
+        ArrayListMultimap<String, AggregateFunction> reductionMultimap = getAggregateFunctionMultimapYu();
+
+        for (String name : reductionMultimap.keys()) {
+            List<AggregateFunction> reductions = reductionMultimap.get(name);
+            results.add(group.aggregate(name, reductions.toArray(new AggregateFunction[0])));
+        }
+        return combineTables(results);
+    }
+    
+    /**
      * Associates the columns to be summarized with the functions that match their type. All valid combinations are used
      * @param group A table slice group
      * @return      A table containing a row of summarized data for each group in the table slice group
@@ -188,6 +252,26 @@ public class Summarizer {
             results.add(group.aggregate(name, reductions.toArray(new AggregateFunction[0])));
         }
         return combineTables(results);
+    }
+
+    private ArrayListMultimap<String, AggregateFunction> getAggregateFunctionMultimapYu() {
+        ArrayListMultimap<String, AggregateFunction> reductionMultimap = ArrayListMultimap.create();
+        int index=0;
+        if(summarizedColumns.size()!=reductions.length) {
+        	throw new IllegalArgumentException(reductions.length + " length of aggregate function not same as columns size"+this.summarizedColumns.size());
+        }
+        for (String name: summarizedColumns) {
+            Column column = temp.column(name);
+            ColumnType type = column.type();
+            AggregateFunction reduction = reductions[index];            
+            if (reduction.isCompatibleWith(type)) {
+            	reductionMultimap.put(name, reduction);
+            }else {
+            	throw new IllegalArgumentException(reduction + " is not compatible with column type:"+type);
+            }
+            index = index+1;
+        }
+        return reductionMultimap;
     }
 
     private ArrayListMultimap<String, AggregateFunction> getAggregateFunctionMultimap() {

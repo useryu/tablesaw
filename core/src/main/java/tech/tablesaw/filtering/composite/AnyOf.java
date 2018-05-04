@@ -51,7 +51,7 @@ public class AnyOf implements Filter {
         Selection selection = null;
         for (Filter filter : filterList) {
             if (selection == null) {
-                selection = filter.apply(relation);
+                selection = filter.apply(relation).clone();
             } else {
                 selection.or(filter.apply(relation));
             }

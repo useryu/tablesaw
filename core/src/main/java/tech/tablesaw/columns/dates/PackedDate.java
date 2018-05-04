@@ -2,13 +2,19 @@ package tech.tablesaw.columns.dates;
 
 import tech.tablesaw.api.DateColumn;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 
-public class PackedDate {
+public class PackedDate implements Serializable{
 
-    private int index = 0;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private int index = 0;
     private final DateColumn dateColumn;
 
     public PackedDate(DateColumn column) {

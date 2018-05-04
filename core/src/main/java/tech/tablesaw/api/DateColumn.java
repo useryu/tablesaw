@@ -35,6 +35,7 @@ import tech.tablesaw.selection.BitmapBackedSelection;
 import tech.tablesaw.selection.Selection;
 import tech.tablesaw.sorting.comparators.DescendingIntComparator;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -56,9 +57,14 @@ import java.util.function.Supplier;
  * A column in a base table that contains float values
  */
 public class DateColumn extends AbstractColumn implements DateFilters, DateFillers<DateColumn>,
-DateMapFunctions, CategoricalColumn, Iterable<LocalDate> {
+DateMapFunctions, CategoricalColumn, Iterable<LocalDate> , Serializable{
 
-    public static final int MISSING_VALUE = (Integer) ColumnType.LOCAL_DATE.getMissingValue();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final int MISSING_VALUE = (Integer) ColumnType.LOCAL_DATE.getMissingValue();
 
     /**
      * locale for formatter
@@ -615,21 +621,27 @@ DateMapFunctions, CategoricalColumn, Iterable<LocalDate> {
     @Override
     public Iterator<LocalDate> iterator() {
 
-        return new Iterator<LocalDate>() {
-
-            final IntIterator intIterator = intIterator();
-
-            @Override
-            public boolean hasNext() {
-                return intIterator.hasNext();
-            }
-
-            @Override
-            public LocalDate next() {
-                return PackedLocalDate.asLocalDate(intIterator.nextInt());
-            }
-        };
+        return new LDIterator();
     }
+    
+	private class LDIterator implements Iterator<LocalDate>, Serializable {
+
+		/**
+		* 
+		*/
+		private static final long serialVersionUID = 1L;
+		final IntIterator intIterator = intIterator();
+
+		@Override
+		public boolean hasNext() {
+			return intIterator.hasNext();
+		}
+
+		@Override
+		public LocalDate next() {
+			return PackedLocalDate.asLocalDate(intIterator.nextInt());
+		}
+	}
 
     // fillWith methods
 

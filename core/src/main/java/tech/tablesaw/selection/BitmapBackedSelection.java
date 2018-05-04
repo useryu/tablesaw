@@ -177,4 +177,10 @@ public class BitmapBackedSelection implements Selection {
             }
         };
     }
+    
+    @Override
+    public Selection clone() {
+    	RoaringBitmap newBigMap = this.bitmap.clone();
+		return new BitmapBackedSelection(newBigMap );
+    }
 }

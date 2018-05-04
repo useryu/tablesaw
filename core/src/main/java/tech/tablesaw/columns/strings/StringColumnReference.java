@@ -42,6 +42,7 @@ import tech.tablesaw.columns.strings.filters.NotEqualTo;
 import tech.tablesaw.columns.strings.filters.StartsWith;
 import tech.tablesaw.filtering.Filter;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -60,9 +61,14 @@ import java.util.List;
  * and columnName to get access to the right column, and then fulfils its role by ensuring that the filtering
  * "isEqualTo("Bar") is applied to all the cells in the column.
  */
-public class StringColumnReference extends ColumnReference {
+public class StringColumnReference extends ColumnReference implements Serializable {
 
-    public StringColumnReference(String column) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public StringColumnReference(String column) {
         super(column);
     }
 

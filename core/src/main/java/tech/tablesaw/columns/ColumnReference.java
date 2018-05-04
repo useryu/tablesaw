@@ -14,6 +14,8 @@
 
 package tech.tablesaw.columns;
 
+import java.io.Serializable;
+
 import tech.tablesaw.filtering.Filter;
 import tech.tablesaw.filtering.IsMissing;
 import tech.tablesaw.filtering.IsNotMissing;
@@ -34,9 +36,13 @@ import tech.tablesaw.filtering.IsNotMissing;
  * and columnName to get access to the right column, and then fulfils its role by ensuring that the filtering
  * "isEqualTo("Bar") is applied to all the cells in the column.
  */
-public class ColumnReference {
+public class ColumnReference implements Serializable{
 
-    private final String columnName;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final String columnName;
 
     public ColumnReference(String column) {
         this.columnName = column;
